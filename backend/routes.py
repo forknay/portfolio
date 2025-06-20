@@ -64,6 +64,19 @@ def update_student(student_id):
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+@app.route("/delete_student/<int:student_id>", methods=['DELETE'])
+def delete_student(student_id):
+    student = models.Student.query.get(student_id)
+    if not student:
+        return jsonify({"error": "Student not found"}), 404
+
+    try:
+        db.session.delete(student)
+        db.session.commit()
+        return jsonify({"message": "Student deleted successfully"}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     with app.app_context():
