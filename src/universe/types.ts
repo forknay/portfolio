@@ -35,6 +35,8 @@ export type AtmosphereType = "shell" | "clouds";
 
 export interface AtmosphereSpec {
   type: AtmosphereType;
+  /** Cloud/continent colour (clouds only). Defaults to off-white. */
+  color?: string;
   params?: Record<string, number>;
 }
 
@@ -59,11 +61,19 @@ export interface Planet {
   /** Body copy shown on the planet panel. */
   sectionBody: string;
   links: PlanetLink[];
+  /**
+   * Optional preprocessed images shown looping in the planet's "hologram"
+   * screen. Keep them small + few (they count toward the size budget, but only
+   * load at the planet level). If omitted, a procedural placeholder is shown.
+   */
+  media?: string[];
 
   baseColor: string;
   accentColor: string;
   /** Planet sphere radius in scene units. */
   radius: number;
+  /** Icosphere subdivision (1 = chunky low-poly … 4 = smooth). Default 3. */
+  polyDetail?: number;
   /** Idle self-rotation speed (radians/sec). */
   rotationSpeed: number;
 

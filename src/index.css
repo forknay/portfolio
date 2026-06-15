@@ -6,6 +6,8 @@
   --border: rgba(255, 255, 255, 0.12);
   --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --font-celestial: "Cinzel", "Cormorant Garamond", "Times New Roman", serif;
+  --font-tech: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 
 * {
@@ -64,6 +66,11 @@ canvas {
 .crumb.is-current {
   font-weight: 600;
 }
+.crumb-brand {
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--fg);
+}
 .crumb-sep {
   color: rgba(255, 255, 255, 0.25);
 }
@@ -79,18 +86,16 @@ canvas {
 /* ---- Constellation name (celestial font, landing page) ---- */
 .constellation-label {
   position: absolute;
-  bottom: 46px;
-  left: 0;
-  right: 0;
-  text-align: center;
+  bottom: 26px;
+  right: 28px;
+  text-align: right;
   font-family: var(--font-celestial);
   font-weight: 600;
-  font-size: clamp(20px, 4vw, 40px);
-  letter-spacing: 0.34em;
-  text-indent: 0.34em; /* offset the trailing tracking so it stays centred */
+  font-size: clamp(13px, 1.5vw, 18px);
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(232, 236, 255, 0.82);
-  text-shadow: 0 0 24px rgba(150, 170, 255, 0.35);
+  color: rgba(232, 236, 255, 0.72);
+  text-shadow: 0 0 18px rgba(150, 170, 255, 0.3);
   opacity: 0;
   transition: opacity 0.6s ease;
 }
@@ -98,97 +103,280 @@ canvas {
   opacity: 1;
 }
 
-/* ---- Planet panel (side on desktop, sheet on mobile) ---- */
-.planet-panel {
+/* ---- Planet stage: left text + right hologram, boxless on the void ---- */
+.planet-stage {
   position: absolute;
-  top: 0;
-  right: 0;
-  height: 100%;
-  width: min(420px, 92vw);
-  padding: 88px 40px 40px;
-  display: flex;
-  align-items: center;
+  inset: 0;
   pointer-events: none;
-  opacity: 0;
-  transform: translateX(40px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-.planet-panel.is-open {
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: auto;
-}
-.planet-panel-inner {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 18px;
-  padding: 26px;
-  backdrop-filter: blur(10px);
-  width: 100%;
-}
-.panel-back {
-  background: none;
-  border: none;
-  color: var(--muted);
-  font: inherit;
-  font-size: 13px;
-  cursor: pointer;
-  padding: 0 0 14px;
-}
-.panel-back:hover {
-  color: var(--fg);
-}
-.panel-title {
-  margin: 0 0 6px;
-  font-size: 30px;
-  line-height: 1.1;
-}
-.panel-subtitle {
-  margin: 0 0 18px;
-  color: var(--muted);
-  font-size: 15px;
-}
-.panel-body {
-  margin: 0 0 22px;
-  font-size: 15px;
-  line-height: 1.6;
-  color: #cdd3ee;
-}
-.panel-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.panel-link {
-  padding: 8px 16px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--fg);
-  text-decoration: none;
-  font-size: 14px;
-  transition: background 0.2s ease;
-}
-.panel-link:hover {
-  background: rgba(255, 255, 255, 0.08);
 }
 
-@media (max-width: 640px) {
-  .planet-panel {
-    align-items: flex-end;
+/* Left text column */
+.planet-info {
+  position: absolute;
+  left: clamp(24px, 5vw, 64px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: min(380px, 42vw);
+  pointer-events: none;
+}
+.planet-info-glow {
+  position: absolute;
+  left: -18%;
+  top: 50%;
+  width: 150%;
+  height: 150%;
+  transform: translateY(-50%);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    transparent 70%
+  );
+  filter: blur(10px);
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: -1;
+}
+.info-eyebrow {
+  margin: 0 0 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  color: var(--accent);
+  opacity: 0.85;
+}
+.info-desc {
+  margin: 0 0 26px;
+  font-family: var(--font-tech);
+  font-size: clamp(15px, 1.5vw, 17px);
+  line-height: 1.7;
+  color: #e9edff;
+  min-height: 3em; /* avoid layout jump while decoding */
+}
+.info-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+.info-link {
+  pointer-events: auto;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--fg);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 2px;
+  border-bottom: 1px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.info-link:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.info-link-arrow {
+  color: var(--accent);
+  font-size: 11px;
+}
+
+/* Right hologram projector */
+.hologram {
+  position: absolute;
+  right: clamp(24px, 5vw, 60px);
+  top: 50%;
+  transform: translateY(-50%) scale(1);
+  width: clamp(220px, 26vw, 340px);
+  aspect-ratio: 4 / 3;
+  pointer-events: none;
+  opacity: 0;
+}
+.hologram.is-on {
+  /* 30% transparent, powered on with a flicker. */
+  opacity: 0.7;
+  animation: holo-poweron 0.7s steps(7) 1;
+}
+@keyframes holo-poweron {
+  0% { opacity: 0; }
+  20% { opacity: 0.5; }
+  35% { opacity: 0.08; }
+  55% { opacity: 0.7; }
+  72% { opacity: 0.18; }
+  100% { opacity: 0.7; }
+}
+.hologram-screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  box-shadow:
+    0 0 30px color-mix(in srgb, var(--accent) 30%, transparent),
+    inset 0 0 30px color-mix(in srgb, var(--accent) 14%, transparent);
+  background: #060a14;
+}
+.hologram-img,
+.hologram-placeholder {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hologram-img {
+  filter: saturate(1.1) brightness(1.05)
+    drop-shadow(1px 0 0 rgba(255, 0, 60, 0.4))
+    drop-shadow(-1px 0 0 rgba(0, 180, 255, 0.4));
+}
+.hologram-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(
+    130deg,
+    color-mix(in srgb, var(--accent) 28%, #060a14),
+    #060a14 70%
+  );
+}
+.holo-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--accent) 25%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent) 25%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.5;
+  -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent);
+  mask-image: radial-gradient(closest-side, #000 60%, transparent);
+}
+.holo-label {
+  position: relative;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.2em;
+  color: color-mix(in srgb, var(--accent) 80%, #fff);
+}
+.hologram-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.05) 0,
+    rgba(255, 255, 255, 0.05) 1px,
+    transparent 2px,
+    transparent 3px
+  );
+  pointer-events: none;
+  animation: holo-scroll 8s linear infinite;
+}
+.hologram-flicker {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  mix-blend-mode: screen;
+  animation: holo-flicker 4s steps(60) infinite;
+  pointer-events: none;
+}
+.hologram-beam {
+  position: absolute;
+  left: 50%;
+  bottom: -44%;
+  width: 100%;
+  height: 46%;
+  transform: translateX(-50%);
+  /* Light converges to a single point below — projected "from nothing". */
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--accent) 30%, transparent),
+    transparent
+  );
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  filter: blur(6px);
+  opacity: 0.65;
+  pointer-events: none;
+}
+.hologram-caption {
+  position: absolute;
+  bottom: -22px;
+  right: 2px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: color-mix(in srgb, var(--accent) 70%, #aab);
+  opacity: 0.8;
+}
+
+@keyframes holo-scroll {
+  to {
+    background-position: 0 12px;
+  }
+}
+@keyframes holo-flicker {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.7;
+  }
+  92% {
+    opacity: 0.32;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hologram-scanlines,
+  .hologram-flicker {
+    animation: none;
+  }
+}
+
+/* Mobile: text along the bottom, hologram tucked top-right */
+@media (max-width: 720px) {
+  .planet-info {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    transform: none;
     width: 100%;
-    padding: 0;
-    transform: translateY(40px);
+    padding: 18px 22px calc(22px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(5, 6, 10, 0.92), transparent);
   }
-  .planet-panel.is-open {
-    transform: translateY(0);
+  .planet-info-glow {
+    display: none;
   }
-  .planet-panel-inner {
-    border-radius: 18px 18px 0 0;
-    border-bottom: none;
-    padding: 22px 20px calc(22px + env(safe-area-inset-bottom));
+  .hologram {
+    top: 15%;
+    right: 14px;
+    transform: translateY(0) scale(0.9);
+    width: 42vw;
   }
-  .panel-title {
-    font-size: 24px;
+  .hologram.is-on {
+    transform: translateY(0) scale(0.94);
+  }
+}
+
+/* ---- FTL warp (canvas lightspeed starfield, on level changes) ---- */
+.warp-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  animation: warp-fade 0.56s ease forwards;
+}
+@keyframes warp-fade {
+  0% {
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }
 

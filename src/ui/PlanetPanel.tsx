@@ -1,50 +1,25 @@
-import { useNavigate } from "react-router-dom";
-import { useNavigation, paths } from "../state/navigation";
+import { useNavigation } from "../state/navigation";
+import { PlanetInfo } from "./PlanetInfo";
+import { Hologram } from "./Hologram";
+
+/** Only these sections show the hologram feed. */
+const HOLOGRAM_SYSTEMS = new Set(["projects", "about"]);
 
 /**
- * Side info panel for the planet (section) level: title, body copy, and links.
- * Slides in on desktop; becomes a bottom sheet on mobile (see index.css).
+ * Planet-level overlay: text column on the left, hologram on the right, planet
+ * centred between them. Boxless — no back button (the breadcrumb handles going
+ * up). Keyed by planet id so the decode/power-on animations replay per planet.
  */
 export function PlanetPanel() {
-  const navigate = useNavigate();
   const { level, system, planet } = useNavigation();
   const open = level === "planet" && !!planet && !!system;
 
+  if (!open || !planet || !system) return null;
+
   return (
-    <aside className={`planet-panel ${open ? "is-open" : ""}`} aria-hidden={!open}>
-      {open && planet && system && (
-        <div className="planet-panel-inner">
-          <button
-            className="panel-back"
-            onClick={() => navigate(paths.system(system.id))}
-          >
-            ← {system.name}
-          </button>
-
-          <h1 className="panel-title" style={{ color: planet.accentColor }}>
-            {planet.name}
-          </h1>
-          <p className="panel-subtitle">{planet.subtitle}</p>
-          <p className="panel-body">{planet.sectionBody}</p>
-
-          {planet.links.length > 0 && (
-            <div className="panel-links">
-              {planet.links.map((link) => (
-                <a
-                  key={link.url}
-                  className="panel-link"
-                  href={link.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{ borderColor: planet.accentColor }}
-                >
-                  {link.label}
-                </a>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </aside>
+    <div className="planet-stage" key={planet.id}>
+      <PlanetInfo system={system} planet={planet} />
+      {HOLOGRAM_SYSTEMS.has(system.id) && <Hologram planet={planet} active />}
+    </div>
   );
 }

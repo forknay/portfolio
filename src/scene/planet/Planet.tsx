@@ -1,11 +1,13 @@
-import { useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { Planet as PlanetData } from "../../universe/types";
 import { SETTINGS } from "../../engine/settings";
+import { hashSeed } from "../../lib/rng";
 import { useReducedMotion } from "../../engine/useReducedMotion";
 import { Clothing } from "./Clothing";
 import { Atmosphere } from "./Atmosphere";
+import { buildPlanet } from "./planetGeometry";
 
 /**
  * The centred, slowly-rotating planet shown at the planet level: a flat-shaded
@@ -17,6 +19,12 @@ export function Planet({ planet }: { planet: PlanetData }) {
   const group = useRef<THREE.Group>(null);
   const showAtmosphere = SETTINGS.atmosphere && !!planet.atmosphere;
 
+  const geometry = useMemo(
+    () => buildPlanet(planet.radius, planet.polyDetail ?? 3, hashSeed(planet.id)),
+    [planet.radius, planet.polyDetail, planet.id],
+  );
+  useEffect(() => () => geometry.dispose(), [geometry]);
+
   useFrame((_, dt) => {
     if (!reduced && group.current) group.current.rotation.y += dt * planet.rotationSpeed;
   });
@@ -25,8 +33,7 @@ export function Planet({ planet }: { planet: PlanetData }) {
     <group>
       {/* Rotating body + clothing + surface clouds. */}
       <group ref={group}>
-        <mesh>
-          <icosahedronGeometry args={[planet.radius, 4]} />
+        <mesh geometry={geometry}>
           <meshStandardMaterial
             color={planet.baseColor}
             flatShading

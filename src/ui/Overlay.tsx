@@ -5,6 +5,7 @@ import { useUIStore } from "../state/store";
 import { Breadcrumb } from "./Breadcrumb";
 import { ConstellationLabel } from "./ConstellationLabel";
 import { PlanetPanel } from "./PlanetPanel";
+import { WarpOverlay } from "./WarpOverlay";
 
 /**
  * HTML layer sitting above the canvas. Hosts the breadcrumb, hover subtitle and
@@ -39,6 +40,7 @@ export function Overlay() {
       <Breadcrumb />
       <ConstellationLabel />
       <PlanetPanel />
+      <WarpOverlay />
     </div>
   );
 }

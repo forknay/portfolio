@@ -1,50 +1,47 @@
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import * as THREE from "three";
 import type { AtmosphereSpec, Planet } from "../../universe/types";
-import { hashSeed, mulberry32, range } from "../../lib/rng";
-import { fibonacciSphere, UP } from "../../lib/sphere";
+import { buildContinents } from "./continents";
 import { LowPolyAtmosphere } from "./LowPolyAtmosphere";
 
-const dummy = new THREE.Object3D();
-
 /**
- * Partial, opaque white cloud cover: low-poly "puffs" sitting just above the
- * surface at scattered points — like clouds on Earth, NOT a full shell. Parented
- * to the rotating planet group so the clouds turn with the surface.
+ * Thin, continent-like white cloud cover carved from noise: a layer that hugs
+ * the surface with fluctuating thickness (not puffy blobs). Parented to the
+ * rotating planet group so it turns with the surface.
  */
-function CloudCover({ planet, params }: { planet: Planet; params: Record<string, number> }) {
-  const ref = useRef<THREE.InstancedMesh>(null);
-  const count = params.count ?? 9;
+function CloudLayer({ planet, spec }: { planet: Planet; spec: AtmosphereSpec }) {
+  const params = spec.params ?? {};
+  const geometry = useMemo(
+    () =>
+      buildContinents(planet.radius, {
+        coverage: params.coverage,
+        freq: params.freq,
+        topBias: params.topBias,
+        pattern: params.pattern,
+      }),
+    [planet.radius, params.coverage, params.freq, params.topBias, params.pattern],
+  );
 
-  useLayoutEffect(() => {
-    const mesh = ref.current;
-    if (!mesh) return;
-    const rand = mulberry32(hashSeed(planet.id + "-clouds"));
-    for (let i = 0; i < count; i++) {
-      const n = fibonacciSphere(i, count);
-      dummy.position.copy(n).multiplyScalar(planet.radius * 1.06);
-      dummy.quaternion.setFromUnitVectors(UP, n);
-      dummy.rotateY(rand() * Math.PI * 2);
-      const s = range(rand, 0.45, 0.85) * planet.radius;
-      dummy.scale.set(s, s * 0.26, s * 0.72);
-      dummy.updateMatrix();
-      mesh.setMatrixAt(i, dummy.matrix);
-    }
-    mesh.instanceMatrix.needsUpdate = true;
-  }, [planet.id, count, planet.radius]);
+  // Dispose the generated geometry when it changes / unmounts.
+  useEffect(() => () => geometry.dispose(), [geometry]);
 
   return (
-    <instancedMesh ref={ref} args={[undefined, undefined, count]}>
-      <icosahedronGeometry args={[1, 0]} />
-      <meshStandardMaterial color="#f4f7ff" flatShading roughness={1} metalness={0} />
-    </instancedMesh>
+    <mesh geometry={geometry}>
+      <meshStandardMaterial
+        color={spec.color ?? "#eef4ff"}
+        flatShading
+        roughness={1}
+        metalness={0}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
   );
 }
 
 /**
- * Per-planet atmosphere. `shell` is a full translucent faceted shell; `clouds`
- * is partial opaque white cover. The pieces that should turn with the planet
- * (clouds) are returned separately from the static rim/shell via `layer`.
+ * Per-planet atmosphere. `shell` and `clouds` are mutually exclusive:
+ * - `shell`  — a full translucent faceted shell (static "halo" layer).
+ * - `clouds` — thin continent-like white cover (rotates with the surface).
  */
 export function Atmosphere({
   planet,
@@ -53,22 +50,17 @@ export function Atmosphere({
 }: {
   planet: Planet;
   spec: AtmosphereSpec;
-  /** "surface" = rotates with the planet; "halo" = static shell/rim. */
+  /** "surface" = rotates with the planet; "halo" = static shell. */
   layer: "surface" | "halo";
 }) {
-  const params = spec.params ?? {};
-
   if (spec.type === "clouds") {
-    if (layer === "surface") return <CloudCover planet={planet} params={params} />;
-    // Faint white rim so cloudy planets read as having air.
-    return (
-      <LowPolyAtmosphere radius={planet.radius} color="#dfe8ff" scale={1.2} opacity={0.1} />
-    );
+    return layer === "surface" ? <CloudLayer planet={planet} spec={spec} /> : null;
   }
 
-  // shell: only the static translucent shell.
-  if (spec.type === "shell" && layer === "halo") {
-    return <LowPolyAtmosphere radius={planet.radius} color={planet.accentColor} />;
+  if (spec.type === "shell") {
+    return layer === "halo" ? (
+      <LowPolyAtmosphere radius={planet.radius} color={planet.accentColor} />
+    ) : null;
   }
 
   return null;

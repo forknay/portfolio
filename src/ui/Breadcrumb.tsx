@@ -16,8 +16,8 @@ export function Breadcrumb() {
 
   return (
     <nav className="breadcrumb" aria-label="Location">
-      <Link to={paths.galaxy()} className="crumb">
-        Galaxy
+      <Link to={paths.galaxy()} className="crumb crumb-brand">
+        JYANG
       </Link>
       {system && (
         <>

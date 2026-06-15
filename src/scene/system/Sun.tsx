@@ -16,7 +16,7 @@ export function Sun({ color, size }: { color: string; size: number }) {
     <group>
       <pointLight color={color} intensity={2.2} distance={120} decay={0.6} />
       <mesh ref={core}>
-        <icosahedronGeometry args={[size, 1]} />
+        <icosahedronGeometry args={[size, 2]} />
         <meshBasicMaterial color={color} toneMapped={false} />
       </mesh>
     </group>
