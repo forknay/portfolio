@@ -38,10 +38,10 @@ export function buildContinents(
 ): THREE.BufferGeometry {
   const detail = opts.detail ?? 3;
   const freq = opts.freq ?? 1.8;
-  const coverage = opts.coverage ?? 0.34;
+  const coverage = opts.coverage ?? 0.47;
   const baseThick = opts.baseThick ?? 0.02;
-  const ampThick = opts.ampThick ?? 0.18;
-  const topBias = opts.topBias ?? 0.4;
+  const ampThick = opts.ampThick ?? 0.14;
+  const topBias = opts.topBias ?? 0;
   const baseLift = opts.baseLift ?? 0.05;
   const seed = PATTERN_SEEDS[(opts.pattern ?? 0) % PATTERN_SEEDS.length];
   const threshold = 1 - coverage;
@@ -58,8 +58,7 @@ export function buildContinents(
 
   const topRadius = (d: THREE.Vector3): number => {
     const fluct = fbm(d.x * freq * 1.4, d.y * freq * 1.4, d.z * freq * 1.4, seed + 57, 2);
-    let t = baseThick + fluct * ampThick;
-    t *= 0.5 + 1.5 * Math.max(0, d.y); // chunkier toward the top
+    const t = baseThick + fluct * ampThick; // uniform thickness (no latitude bias)
     return radius * (1 + baseLift + t);
   };
   const baseR = radius * (1 + baseLift);

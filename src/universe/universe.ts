@@ -35,7 +35,7 @@ export const UNIVERSE: Universe = {
           rotationSpeed: 0.18,
           orbit: { radius: 9, speed: 0.12, inclination: 0.06, phase: 0.2 },
           // Reference "Paper Planes" planet: chunky, top-heavy continent cover.
-          atmosphere: { type: "clouds", color: "#d8efff", params: { pattern: 0, coverage: 0.34 } },
+          atmosphere: { type: "clouds", color: "#d8efff", params: { pattern: 0, coverage: 0.5 } },
         },
         {
           id: "atlas-tool",
@@ -74,7 +74,7 @@ export const UNIVERSE: Universe = {
           polyDetail: 3,
           rotationSpeed: 0.15,
           orbit: { radius: 8.5, speed: 0.1, inclination: 0.1, phase: 1.1 },
-          atmosphere: { type: "clouds", color: "#cfeccd", params: { pattern: 1, coverage: 0.3 } },
+          atmosphere: { type: "clouds", color: "#cfeccd", params: { pattern: 1, coverage: 0.46 } },
         },
         {
           id: "skills",
@@ -157,7 +157,7 @@ export const UNIVERSE: Universe = {
           polyDetail: 2,
           rotationSpeed: 0.17,
           orbit: { radius: 9, speed: 0.1, inclination: 0.08, phase: 2.0 },
-          atmosphere: { type: "clouds", color: "#ffdfe9", params: { pattern: 1, coverage: 0.34 } },
+          atmosphere: { type: "clouds", color: "#ffdfe9", params: { pattern: 1, coverage: 0.48 } },
         },
       ],
     },
