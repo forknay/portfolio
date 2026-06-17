@@ -47,7 +47,7 @@ export function Hologram({ planet, active }: { planet: Planet; active: boolean }
         {frames ? (
           <img className="hologram-img" src={frames[current]} alt="" />
         ) : (
-          <div className={`hologram-placeholder frame-${current}`}>
+          <div className="hologram-placeholder">
             <span className="holo-grid" />
             <span className="holo-label">SIGNAL {String(current + 1).padStart(2, "0")}</span>
           </div>

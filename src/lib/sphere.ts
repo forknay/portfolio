@@ -7,6 +7,3 @@ export function fibonacciSphere(i: number, n: number): THREE.Vector3 {
   const phi = i * 2.399963229728653; // golden angle
   return new THREE.Vector3(Math.cos(phi) * r, y, Math.sin(phi) * r);
 }
-
-/** Up axis, reused for orienting surface-aligned meshes. */
-export const UP = new THREE.Vector3(0, 1, 0);

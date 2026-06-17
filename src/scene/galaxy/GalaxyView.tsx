@@ -78,7 +78,7 @@ export function GalaxyView() {
             <StarSprite
               key={star.id}
               position={pos}
-              size={1.15}
+              size={1.7}
               coreColor="#ffffff"
               haloColor={lighten(system.accentColor, 0.55)}
               glow={0.5}
@@ -97,7 +97,7 @@ export function GalaxyView() {
           <StarSprite
             key={star.id}
             position={pos}
-            size={0.7}
+            size={1.05}
             coreColor="#eef2ff"
             haloColor="#9fb0e0"
             glow={0.16}

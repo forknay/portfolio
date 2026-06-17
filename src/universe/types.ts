@@ -4,8 +4,6 @@
  * without touching any engine/scene code.
  */
 
-export type Vec3 = [number, number, number];
-
 /** A link shown on a planet's info panel. */
 export interface PlanetLink {
   label: string;

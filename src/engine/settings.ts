@@ -10,6 +10,4 @@ export const SETTINGS = {
   bloom: true,
   /** Low-poly fake-atmosphere shell on planets. */
   atmosphere: true,
-  /** Camera transition duration (seconds). */
-  transitionDuration: 1.0,
 } as const;

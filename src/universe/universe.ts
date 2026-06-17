@@ -146,9 +146,9 @@ export const UNIVERSE: Universe = {
           name: "Reach Out",
           subtitle: "Email and socials.",
           sectionBody:
-            "Placeholder contact section. Best ways to reach you and your response time.",
+            "The fastest way to reach me is email — I usually reply within a day. Open to internships, collaborations, and interesting problems.",
           links: [
-            { label: "Email", url: "mailto:hello@example.com" },
+            { label: "Email", url: "mailto:julien.yang@mail.mcgill.ca" },
             { label: "GitHub", url: "https://github.com/" },
           ],
           baseColor: "#f0608a",
