@@ -58,6 +58,11 @@ export interface Planet {
   subtitle: string;
   /** Body copy shown on the planet panel. */
   sectionBody: string;
+  /**
+   * Optional second column of body text, shown on the right for text-heavy
+   * sections (e.g. Experience). Only rendered when the planet has no hologram.
+   */
+  bodyRight?: string;
   links: PlanetLink[];
   /**
    * Optional preprocessed images shown looping in the planet's "hologram"

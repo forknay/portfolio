@@ -1,14 +1,15 @@
 import { useNavigation } from "../state/navigation";
 import { PlanetInfo } from "./PlanetInfo";
+import { InfoColumn } from "./InfoColumn";
 import { Hologram } from "./Hologram";
 
 /** Only these sections show the hologram feed. */
 const HOLOGRAM_SYSTEMS = new Set(["projects", "about"]);
 
 /**
- * Planet-level overlay: text column on the left, hologram on the right, planet
- * centred between them. Boxless — no back button (the breadcrumb handles going
- * up). Keyed by planet id so the decode/power-on animations replay per planet.
+ * Planet-level overlay: a left text column, plus EITHER a hologram (Projects /
+ * About) OR an optional second text column on the right (text-heavy sections
+ * like Experience). Boxless, keyed by planet id so the animations replay.
  */
 export function PlanetPanel() {
   const { level, system, planet } = useNavigation();
@@ -16,10 +17,18 @@ export function PlanetPanel() {
 
   if (!open || !planet || !system) return null;
 
+  const hologram = HOLOGRAM_SYSTEMS.has(system.id);
+  const showRight = !!planet.bodyRight && !hologram;
+
   return (
     <div className="planet-stage" key={planet.id}>
-      <PlanetInfo system={system} planet={planet} />
-      {HOLOGRAM_SYSTEMS.has(system.id) && <Hologram planet={planet} active />}
+      <div className="planet-text">
+        <PlanetInfo system={system} planet={planet} />
+        {showRight && (
+          <InfoColumn side="right" accent={planet.accentColor} body={planet.bodyRight!} delayBase={200} />
+        )}
+      </div>
+      {hologram && <Hologram planet={planet} active />}
     </div>
   );
 }

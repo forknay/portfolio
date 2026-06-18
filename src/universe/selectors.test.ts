@@ -10,8 +10,8 @@ describe("universe selectors", () => {
   it("resolves a known system and planet", () => {
     const system = getSystem("projects");
     expect(system?.name).toBe("Projects");
-    const planet = getPlanet("projects", "paper-planes");
-    expect(planet?.name).toBe("Paper Planes");
+    const planet = getPlanet("projects", "pocketllm");
+    expect(planet?.name).toBe("PocketLLM");
   });
 
   it("returns undefined for unknown ids", () => {

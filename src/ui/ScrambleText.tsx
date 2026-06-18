@@ -49,7 +49,7 @@ export function ScrambleText({
       let s = "";
       for (let i = 0; i < text.length; i++) {
         const c = text[i];
-        if (c === " " || i < revealed) s += c;
+        if (c === " " || c === "\n" || i < revealed) s += c;
         else s += GLYPHS[(Math.random() * GLYPHS.length) | 0];
       }
       setOut(s);

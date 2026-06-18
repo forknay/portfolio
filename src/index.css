@@ -110,14 +110,24 @@ canvas {
   pointer-events: none;
 }
 
-/* Left text column */
+/* Text columns layer (one or two columns) */
+.planet-text {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
 .planet-info {
   position: absolute;
-  left: clamp(24px, 5vw, 64px);
   top: 50%;
   transform: translateY(-50%);
-  width: min(380px, 42vw);
+  width: min(360px, 38vw);
   pointer-events: none;
+}
+.planet-info.is-left {
+  left: clamp(24px, 5vw, 64px);
+}
+.planet-info.is-right {
+  right: clamp(24px, 5vw, 64px);
 }
 .planet-info-glow {
   position: absolute;
@@ -151,6 +161,7 @@ canvas {
   line-height: 1.7;
   color: #e9edff;
   min-height: 3em; /* avoid layout jump while decoding */
+  white-space: pre-line; /* honor newlines in body text */
 }
 .info-links {
   display: flex;
@@ -331,17 +342,20 @@ canvas {
   }
 }
 
-/* Mobile: text along the bottom, hologram tucked top-right */
+/* Mobile: columns stack along the bottom, hologram tucked top-right */
 @media (max-width: 720px) {
+  .planet-text {
+    inset: auto 0 0 0;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: env(safe-area-inset-bottom);
+    background: linear-gradient(to top, rgba(5, 6, 10, 0.94), transparent);
+  }
   .planet-info {
-    left: 0;
-    right: 0;
-    top: auto;
-    bottom: 0;
+    position: static;
     transform: none;
     width: 100%;
-    padding: 18px 22px calc(22px + env(safe-area-inset-bottom));
-    background: linear-gradient(to top, rgba(5, 6, 10, 0.92), transparent);
+    padding: 14px 22px;
   }
   .planet-info-glow {
     display: none;
