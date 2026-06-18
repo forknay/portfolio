@@ -1,4 +1,5 @@
 # Here is all the information necessary to populate the planets
+## Note you don't have to use word by word, just the general information has to be the same. You can change up the order of the skills and the formatting, but use as given for bio education and work. 
 
 https://www.linkedin.com/in/julienyang12/ - Linkedin
 https://github.com/forknay - Github profile
