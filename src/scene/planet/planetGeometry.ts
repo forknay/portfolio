@@ -1,5 +1,17 @@
 import * as THREE from "three";
 import { fbm } from "../../lib/noise";
+import { hashSeed } from "../../lib/rng";
+
+/**
+ * A deterministic per-planet axial tilt, so ringed planets open their rings into
+ * the iconic Saturn ellipse (and every planet leans a little for variety).
+ */
+export function planetAxialTilt(id: string): [number, number, number] {
+  const h = hashSeed(id);
+  const x = -0.55 + ((h % 100) / 100) * 0.22; // lean back ~ -0.55..-0.33
+  const z = (((h >> 5) % 100) / 100 - 0.5) * 0.3; // slight roll
+  return [x, 0, z];
+}
 
 const UP = new THREE.Vector3(0, 1, 0);
 const ALT = new THREE.Vector3(1, 0, 0);
@@ -84,4 +96,23 @@ export function buildPlanet(
 
   geo.computeVertexNormals();
   return geo;
+}
+
+// Cache built geometries so re-entering a planet/system doesn't rebuild (the
+// scene only shows one level at a time, and these are small + reused).
+const cache = new Map<string, THREE.BufferGeometry>();
+
+/** Cached `buildPlanet` keyed by its inputs. */
+export function getPlanetGeometry(
+  radius: number,
+  detail: number,
+  seed: number,
+): THREE.BufferGeometry {
+  const key = `${radius}|${detail}|${seed}`;
+  let g = cache.get(key);
+  if (!g) {
+    g = buildPlanet(radius, detail, seed);
+    cache.set(key, g);
+  }
+  return g;
 }

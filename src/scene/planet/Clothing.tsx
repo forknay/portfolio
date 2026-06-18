@@ -3,67 +3,93 @@ import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import type { ClothingSpec, Planet } from "../../universe/types";
 import { hashSeed, mulberry32, range } from "../../lib/rng";
-import { fibonacciSphere } from "../../lib/sphere";
 import { useReducedMotion } from "../../engine/useReducedMotion";
 
 const dummy = new THREE.Object3D();
 
-/** A ring of low-poly rocks in the planet's equatorial plane. */
+/**
+ * A smooth, Saturn-style ring: flat banded discs in the planet's equatorial
+ * plane (not a belt of rocks). Two bands with a Cassini-like gap, tinted toward
+ * the planet's accent. Sits in the local xz plane so the planet's spin doesn't
+ * tumble it; the planet's axial tilt is what opens it into the iconic ellipse.
+ */
 function Ring({ planet, params }: { planet: Planet; params: Record<string, number> }) {
+  const r = planet.radius;
+  const inner = (params.inner ?? 1.35) * r;
+  const outer = (params.outer ?? 2.2) * r;
+  const span = outer - inner;
+  const band1Outer = inner + span * 0.55;
+  const band2Inner = inner + span * 0.66;
+
+  const colors = useMemo(() => {
+    const accent = new THREE.Color(planet.accentColor);
+    return {
+      c1: accent.clone().lerp(new THREE.Color("#e7dcc0"), 0.6).getStyle(),
+      c2: accent.clone().lerp(new THREE.Color("#cdbf9a"), 0.6).getStyle(),
+    };
+  }, [planet.accentColor]);
+
+  return (
+    <group rotation={[-Math.PI / 2, 0, 0]}>
+      <mesh>
+        <ringGeometry args={[inner, band1Outer, 72]} />
+        <meshStandardMaterial
+          color={colors.c1}
+          roughness={1}
+          metalness={0}
+          transparent
+          opacity={0.9}
+          depthWrite={false}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+      <mesh>
+        <ringGeometry args={[band2Inner, outer, 72]} />
+        <meshStandardMaterial
+          color={colors.c2}
+          roughness={1}
+          metalness={0}
+          transparent
+          opacity={0.72}
+          depthWrite={false}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
+    </group>
+  );
+}
+
+/** A belt of low-poly rocks in the planet's equatorial plane (not Saturn-smooth). */
+function Belt({ planet, params }: { planet: Planet; params: Record<string, number> }) {
   const ref = useRef<THREE.InstancedMesh>(null);
-  const count = params.count ?? 80;
-  const inner = params.inner ?? planet.radius * 1.5;
-  const outer = params.outer ?? planet.radius * 2.0;
+  const count = params.count ?? 90;
+  const inner = (params.inner ?? 1.4) * planet.radius;
+  const outer = (params.outer ?? 2.1) * planet.radius;
 
   useLayoutEffect(() => {
     const mesh = ref.current;
     if (!mesh) return;
-    const rand = mulberry32(hashSeed(planet.id + "-ring"));
+    const rand = mulberry32(hashSeed(planet.id + "-belt"));
     for (let i = 0; i < count; i++) {
       const a = (i / count) * Math.PI * 2 + range(rand, -0.05, 0.05);
       const rad = range(rand, inner, outer);
-      dummy.position.set(Math.cos(a) * rad, range(rand, -0.06, 0.06), Math.sin(a) * rad);
+      dummy.position.set(
+        Math.cos(a) * rad,
+        range(rand, -0.05, 0.05) * planet.radius,
+        Math.sin(a) * rad,
+      );
       dummy.rotation.set(rand() * 6.28, rand() * 6.28, rand() * 6.28);
-      dummy.scale.setScalar(range(rand, 0.05, 0.14));
+      dummy.scale.setScalar(range(rand, 0.04, 0.1) * planet.radius);
       dummy.updateMatrix();
       mesh.setMatrixAt(i, dummy.matrix);
     }
     mesh.instanceMatrix.needsUpdate = true;
-  }, [planet.id, count, inner, outer]);
+  }, [planet.id, planet.radius, count, inner, outer]);
 
   return (
     <instancedMesh ref={ref} args={[undefined, undefined, count]}>
       <icosahedronGeometry args={[1, 0]} />
       <meshStandardMaterial color={planet.accentColor} flatShading roughness={0.9} />
-    </instancedMesh>
-  );
-}
-
-/** Polygonal mountains poking out of the surface. */
-function Mountains({ planet, params }: { planet: Planet; params: Record<string, number> }) {
-  const ref = useRef<THREE.InstancedMesh>(null);
-  const count = params.count ?? 50;
-
-  useLayoutEffect(() => {
-    const mesh = ref.current;
-    if (!mesh) return;
-    const rand = mulberry32(hashSeed(planet.id + "-mtn"));
-    for (let i = 0; i < count; i++) {
-      const n = fibonacciSphere(i, count);
-      const h = range(rand, 0.12, 0.3);
-      dummy.position.copy(n).multiplyScalar(planet.radius + h * 0.4);
-      dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), n);
-      dummy.scale.set(range(rand, 0.08, 0.16), h, range(rand, 0.08, 0.16));
-      dummy.updateMatrix();
-      mesh.setMatrixAt(i, dummy.matrix);
-    }
-    mesh.instanceMatrix.needsUpdate = true;
-  }, [planet.id, count, planet.radius]);
-
-  return (
-    <instancedMesh ref={ref} args={[undefined, undefined, count]}>
-      <coneGeometry args={[1, 2, 4]} />
-      <meshStandardMaterial color={planet.accentColor} flatShading roughness={0.95} />
     </instancedMesh>
   );
 }
@@ -86,14 +112,13 @@ function Moons({ planet, params }: { planet: Planet; params: Record<string, numb
   }, [planet.id, count, planet.radius]);
 
   const refs = useRef<(THREE.Group | null)[]>([]);
-  useFrame((state, dt) => {
+  useFrame((_, dt) => {
     moons.forEach((m, i) => {
       const g = refs.current[i];
       if (!g) return;
       m.phase += reduced ? 0 : dt * m.speed;
       g.position.set(Math.cos(m.phase) * m.dist, 0, Math.sin(m.phase) * m.dist);
     });
-    void state;
   });
 
   return (
@@ -118,8 +143,8 @@ export function Clothing({ planet, spec }: { planet: Planet; spec: ClothingSpec 
   switch (spec.type) {
     case "ring":
       return <Ring planet={planet} params={params} />;
-    case "mountains":
-      return <Mountains planet={planet} params={params} />;
+    case "belt":
+      return <Belt planet={planet} params={params} />;
     case "moons":
       return <Moons planet={planet} params={params} />;
     default:

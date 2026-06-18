@@ -1,29 +1,31 @@
-import { useEffect, useMemo } from "react";
 import * as THREE from "three";
 import type { AtmosphereSpec, Planet } from "../../universe/types";
-import { buildContinents } from "./continents";
+import { getContinents } from "./continents";
 import { LowPolyAtmosphere } from "./LowPolyAtmosphere";
 
 /**
  * Thin, continent-like white cloud cover carved from noise: a layer that hugs
  * the surface with fluctuating thickness (not puffy blobs). Parented to the
- * rotating planet group so it turns with the surface.
+ * rotating planet group so it turns with the surface. Geometry is cached, so a
+ * lower `detail` here gives a cheaper version for the system (orbiting) view.
  */
-function CloudLayer({ planet, spec }: { planet: Planet; spec: AtmosphereSpec }) {
+function CloudLayer({
+  planet,
+  spec,
+  detail,
+}: {
+  planet: Planet;
+  spec: AtmosphereSpec;
+  detail?: number;
+}) {
   const params = spec.params ?? {};
-  const geometry = useMemo(
-    () =>
-      buildContinents(planet.radius, {
-        coverage: params.coverage,
-        freq: params.freq,
-        topBias: params.topBias,
-        pattern: params.pattern,
-      }),
-    [planet.radius, params.coverage, params.freq, params.topBias, params.pattern],
-  );
-
-  // Dispose the generated geometry when it changes / unmounts.
-  useEffect(() => () => geometry.dispose(), [geometry]);
+  const geometry = getContinents(planet.radius, {
+    coverage: params.coverage,
+    freq: params.freq,
+    topBias: params.topBias,
+    pattern: params.pattern,
+    detail,
+  });
 
   return (
     <mesh geometry={geometry}>
@@ -47,14 +49,19 @@ export function Atmosphere({
   planet,
   spec,
   layer,
+  detail,
 }: {
   planet: Planet;
   spec: AtmosphereSpec;
   /** "surface" = rotates with the planet; "halo" = static shell. */
   layer: "surface" | "halo";
+  /** Optional cloud-geometry detail override (lower = cheaper, for the mini view). */
+  detail?: number;
 }) {
   if (spec.type === "clouds") {
-    return layer === "surface" ? <CloudLayer planet={planet} spec={spec} /> : null;
+    return layer === "surface" ? (
+      <CloudLayer planet={planet} spec={spec} detail={detail} />
+    ) : null;
   }
 
   if (spec.type === "shell") {

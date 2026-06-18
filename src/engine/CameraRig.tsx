@@ -8,8 +8,8 @@ import { useReducedMotion } from "./useReducedMotion";
 const POSES: Record<Level, { pos: THREE.Vector3; target: THREE.Vector3 }> = {
   // Galaxy: head-on and zoomed out so the constellation sits in part of a wide void.
   galaxy: { pos: new THREE.Vector3(0, 0, 62), target: new THREE.Vector3(0, 0, 0) },
-  // System: raised angle so planets clear the sun rather than hiding behind it.
-  system: { pos: new THREE.Vector3(0, 16, 24), target: new THREE.Vector3(0, 0, 0) },
+  // System: raised angle so planets clear the sun, pulled back to fit the full orbits.
+  system: { pos: new THREE.Vector3(0, 27, 41), target: new THREE.Vector3(0, 0, 0) },
   planet: { pos: new THREE.Vector3(0, 0.3, 6.8), target: new THREE.Vector3(0, 0, 0) },
 };
 

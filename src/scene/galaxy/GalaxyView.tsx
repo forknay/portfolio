@@ -7,6 +7,8 @@ import type { System } from "../../universe/types";
 import { paths } from "../../state/navigation";
 import { useUIStore } from "../../state/store";
 import { hashSeed } from "../../lib/rng";
+import { onIdle } from "../../lib/idle";
+import { preloadSystem } from "../lazyViews";
 import { VoidDots } from "../common/VoidDots";
 import { StarSprite } from "../common/StarSprite";
 import { ConstellationLines } from "./ConstellationLines";
@@ -64,6 +66,9 @@ export function GalaxyView() {
     return () => setConstellationName(null);
   }, [layout.constellation.name, setConstellationName]);
 
+  // Warm the system chunk while idle, so the first click in is instant.
+  useEffect(() => onIdle(preloadSystem), []);
+
   return (
     <group>
       <VoidDots count={UNIVERSE.voidDotCount} />
@@ -85,9 +90,10 @@ export function GalaxyView() {
               interactive
               hitSize={7}
               onActivate={() => navigate(paths.system(system.id))}
-              onOver={() =>
-                setHovered({ name: system.name, subtitle: system.subtitle, color: system.accentColor })
-              }
+              onOver={() => {
+                preloadSystem();
+                setHovered({ name: system.name, subtitle: system.subtitle, color: system.accentColor });
+              }}
               onOut={() => setHovered(null)}
             />
           );

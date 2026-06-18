@@ -1,18 +1,10 @@
-import { Suspense, lazy } from "react";
+import { Suspense } from "react";
 import { CameraRig } from "../engine/CameraRig";
 import { PauseOnHidden } from "../engine/PauseOnHidden";
 import { SETTINGS } from "../engine/settings";
 import { useNavigation, type Level } from "../state/navigation";
 import { GalaxyView } from "./galaxy/GalaxyView";
-
-// Lazy per-level so the initial load only pulls the galaxy.
-const SystemView = lazy(() =>
-  import("./system/SystemView").then((m) => ({ default: m.SystemView })),
-);
-const PlanetView = lazy(() =>
-  import("./planet/PlanetView").then((m) => ({ default: m.PlanetView })),
-);
-const PostFX = lazy(() => import("./PostFX"));
+import { SystemView, PlanetView, PostFX } from "./lazyViews";
 
 /**
  * Renders the view matching the current route. If ids don't resolve we fall

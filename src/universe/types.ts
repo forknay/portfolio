@@ -14,7 +14,7 @@ export interface PlanetLink {
  * The optional low-poly accessory mesh worn by a planet ("clothing").
  * `params` is loosely typed per clothing kind and read by the matching factory.
  */
-export type ClothingType = "ring" | "mountains" | "moons";
+export type ClothingType = "ring" | "belt" | "moons";
 
 export interface ClothingSpec {
   type: ClothingType;

@@ -6,10 +6,15 @@ import type { Planet } from "../../universe/types";
 import { paths } from "../../state/navigation";
 import { useUIStore } from "../../state/store";
 import { useReducedMotion } from "../../engine/useReducedMotion";
+import { preloadPlanet } from "../lazyViews";
+import { PlanetBody } from "../planet/PlanetBody";
+import { planetAxialTilt } from "../planet/planetGeometry";
 
 /**
- * A planet orbiting its sun in the system view. Hover shows the corner subtitle;
- * click navigates to the planet level. A faint orbit ring hints at the path.
+ * A planet orbiting its sun in the system view. Renders a reduced-detail version
+ * of the planet's real features (via PlanetBody) so each is recognizable, not
+ * just a coloured sphere. Hover previews the name + warms the planet chunk; click
+ * navigates in.
  */
 export function OrbitingPlanet({
   planet,
@@ -24,8 +29,11 @@ export function OrbitingPlanet({
   const [hovered, setHover] = useState(false);
 
   const orbitGroup = useRef<THREE.Group>(null);
-  const body = useRef<THREE.Mesh>(null);
+  const body = useRef<THREE.Group>(null);
   const angle = useRef(planet.orbit.phase);
+
+  // Compressed: cap body detail and use a cheaper cloud layer for the mini view.
+  const bodyDetail = Math.min(planet.polyDetail ?? 3, 2);
 
   useFrame((_, dt) => {
     if (!reduced) angle.current += dt * planet.orbit.speed;
@@ -43,6 +51,7 @@ export function OrbitingPlanet({
     e.stopPropagation();
     setHover(true);
     document.body.style.cursor = "pointer";
+    preloadPlanet();
     setHovered({ name: planet.name, subtitle: planet.subtitle, color: planet.accentColor });
   };
   const onOut = () => {
@@ -60,9 +69,14 @@ export function OrbitingPlanet({
       </mesh>
 
       <group ref={orbitGroup}>
+        <group rotation={planetAxialTilt(planet.id)}>
+          <group ref={body} scale={hovered ? 1.12 : 1}>
+            <PlanetBody planet={planet} detail={bodyDetail} atmosphereDetail={2} />
+          </group>
+        </group>
+
+        {/* Single invisible hit target — avoids hover flicker between sub-meshes. */}
         <mesh
-          ref={body}
-          scale={hovered ? 1.12 : 1}
           onPointerOver={onOver}
           onPointerOut={onOut}
           onClick={(e) => {
@@ -70,15 +84,8 @@ export function OrbitingPlanet({
             navigate(paths.planet(systemId, planet.id));
           }}
         >
-          <icosahedronGeometry args={[planet.radius, 2]} />
-          <meshStandardMaterial
-            color={planet.baseColor}
-            flatShading
-            roughness={0.85}
-            metalness={0.05}
-            emissive={planet.accentColor}
-            emissiveIntensity={hovered ? 0.25 : 0.08}
-          />
+          <sphereGeometry args={[planet.radius * 1.3, 12, 12]} />
+          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
         </mesh>
       </group>
     </group>

@@ -122,3 +122,20 @@ export function buildContinents(
   geo.computeVertexNormals();
   return geo;
 }
+
+// Cache so repeated planet/system entries don't rebuild the (small) layers.
+const cache = new Map<string, THREE.BufferGeometry>();
+
+/** Cached `buildContinents` keyed by radius + options. */
+export function getContinents(
+  radius: number,
+  opts: ContinentOptions = {},
+): THREE.BufferGeometry {
+  const key = radius + "|" + JSON.stringify(opts);
+  let g = cache.get(key);
+  if (!g) {
+    g = buildContinents(radius, opts);
+    cache.set(key, g);
+  }
+  return g;
+}

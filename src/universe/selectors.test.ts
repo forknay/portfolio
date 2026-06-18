@@ -24,7 +24,7 @@ describe("universe selectors", () => {
     for (const system of UNIVERSE.systems) {
       for (const planet of system.planets) {
         if (planet.clothing) {
-          expect(["ring", "mountains", "moons"]).toContain(planet.clothing.type);
+          expect(["ring", "belt", "moons"]).toContain(planet.clothing.type);
         }
         if (planet.atmosphere) {
           expect(["shell", "clouds"]).toContain(planet.atmosphere.type);
