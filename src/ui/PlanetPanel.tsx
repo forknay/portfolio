@@ -17,7 +17,7 @@ export function PlanetPanel() {
 
   if (!open || !planet || !system) return null;
 
-  const hologram = HOLOGRAM_SYSTEMS.has(system.id);
+  const hologram = HOLOGRAM_SYSTEMS.has(system.id) && planet.hologram !== false;
   const showRight = !!planet.bodyRight && !hologram;
 
   return (

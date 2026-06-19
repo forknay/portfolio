@@ -30,3 +30,8 @@ export async function warmSystem(system: System) {
   const [, warm] = await Promise.all([importSystem(), import("./system/warm")]);
   warm.warmSystemGeometries(system);
 }
+
+/** Ensure every level chunk is loaded (used by the shader warm-up). */
+export function loadAllViews() {
+  return Promise.all([importSystem(), importPlanet(), import("./PostFX")]);
+}

@@ -25,6 +25,7 @@ export const UNIVERSE: Universe = {
           sectionBody:
             "A PyTorch transformer implemented from scratch. The full architecture, written and trained from the ground up to really understand how LLMs work",
           links: [{ label: "Source", url: "https://github.com/forknay/pocketllm" }],
+          hologram: false,
           baseColor: "#d8753a",
           accentColor: "#ffd9a0",
           radius: 1.85,
@@ -41,6 +42,7 @@ export const UNIVERSE: Universe = {
           sectionBody:
             "A 5-stage pipelined RISC-V processor with a reduced ISA, designed in Verilog",
           links: [{ label: "Source", url: "https://github.com/forknay/cpulite" }],
+          hologram: false,
           baseColor: "#b85a2c",
           accentColor: "#ffcf9e",
           radius: 1.35,
@@ -86,6 +88,7 @@ export const UNIVERSE: Universe = {
           sectionBody:
             "This very site: a portfolio in Three.js inspired by No Man's Sky",
           links: [{ label: "Source", url: "https://github.com/forknay/portfolio" }],
+          hologram: false,
           baseColor: "#a83e22",
           accentColor: "#ffb27a",
           radius: 1.15,

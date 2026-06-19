@@ -5,6 +5,7 @@ import { SETTINGS } from "../engine/settings";
 import { useNavigation, type Level } from "../state/navigation";
 import { GalaxyView } from "./galaxy/GalaxyView";
 import { SystemView, PlanetView, PostFX } from "./lazyViews";
+import { ShaderWarmup } from "./ShaderWarmup";
 
 /**
  * Renders the view matching the current route. If ids don't resolve we fall
@@ -27,6 +28,7 @@ export function Scene() {
   return (
     <>
       <PauseOnHidden />
+      <ShaderWarmup />
       <CameraRig level={effectiveLevel} systemZoom={system?.cameraZoom ?? 1} />
       <color attach="background" args={["#05060a"]} />
       <fog attach="fog" args={["#05060a", 60, 140]} />

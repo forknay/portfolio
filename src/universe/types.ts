@@ -70,6 +70,8 @@ export interface Planet {
    * load at the planet level). If omitted, a procedural placeholder is shown.
    */
   media?: string[];
+  /** Set false to suppress the hologram even in a hologram section. */
+  hologram?: boolean;
 
   baseColor: string;
   accentColor: string;
