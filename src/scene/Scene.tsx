@@ -27,7 +27,7 @@ export function Scene() {
   return (
     <>
       <PauseOnHidden />
-      <CameraRig level={effectiveLevel} />
+      <CameraRig level={effectiveLevel} systemZoom={system?.cameraZoom ?? 1} />
       <color attach="background" args={["#05060a"]} />
       <fog attach="fog" args={["#05060a", 60, 140]} />
 

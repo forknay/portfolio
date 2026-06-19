@@ -30,6 +30,17 @@ export function pickRandomConstellation(
   return list[Math.floor(rand() * list.length)];
 }
 
+// Chosen once per page load (module singleton) — stays the same across in-app
+// navigation (back to galaxy doesn't reshuffle); only a refresh / new visit
+// picks a fresh one.
+let sessionConstellation: Constellation | null = null;
+
+/** The constellation for this page visit (stable until refresh). */
+export function getSessionConstellation(universe: Universe = UNIVERSE): Constellation {
+  if (!sessionConstellation) sessionConstellation = pickRandomConstellation(universe);
+  return sessionConstellation;
+}
+
 export interface ValidationIssue {
   level: "error";
   message: string;

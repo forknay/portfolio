@@ -14,16 +14,16 @@ export const UNIVERSE: Universe = {
     {
       id: "projects",
       name: "Projects",
-      subtitle: "Things I've designed, built, and shipped.",
+      subtitle: "Best way to learn is practice",
       accentColor: "#ff8a3d", // warm burnt-orange / amber
       sun: { color: "#ffb066", size: 3.2 },
       planets: [
         {
           id: "pocketllm",
           name: "PocketLLM",
-          subtitle: "A transformer built from scratch.",
+          subtitle: "A transformer built from scratch",
           sectionBody:
-            "A PyTorch transformer implemented from scratch. The full architecture, written and trained from the ground up to really understand how LLMs work.",
+            "A PyTorch transformer implemented from scratch. The full architecture, written and trained from the ground up to really understand how LLMs work",
           links: [{ label: "Source", url: "https://github.com/forknay/pocketllm" }],
           baseColor: "#d8753a",
           accentColor: "#ffd9a0",
@@ -39,7 +39,7 @@ export const UNIVERSE: Universe = {
           name: "CPULITE",
           subtitle: "A RISC-V CPU in Verilog.",
           sectionBody:
-            "A 5-stage pipelined RISC-V processor with a reduced ISA, designed in Verilog. Fetch, decode, execute, memory, and writeback, with hazard handling.",
+            "A 5-stage pipelined RISC-V processor with a reduced ISA, designed in Verilog",
           links: [{ label: "Source", url: "https://github.com/forknay/cpulite" }],
           baseColor: "#b85a2c",
           accentColor: "#ffcf9e",
@@ -54,7 +54,7 @@ export const UNIVERSE: Universe = {
           name: "Ozymandias",
           subtitle: "A game jam game in Godot.",
           sectionBody:
-            "A game built in Godot with GDScript for a game jam, designed, scripted, and shipped on a deadline.",
+            "An Iron Lung inspired game built in Godot for a game jam, built with Teo and Jessie",
           links: [{ label: "Play", url: "https://julienfork.itch.io/ozymandias" }],
           baseColor: "#c25a2a",
           accentColor: "#ffcf99",
@@ -69,7 +69,7 @@ export const UNIVERSE: Universe = {
           name: "Terminal Portfolio",
           subtitle: "A portfolio you SSH into.",
           sectionBody:
-            "A portfolio that lives entirely in the terminal, deployed as a Docker container on Azure. For the true devs who never leave the shell:\n\nssh julyang.space",
+            "A portfolio that lives entirely in the terminal, deployed as a Docker container on Azure. For the true devs who never leave the shell \n\nssh julyang.space",
           links: [],
           baseColor: "#e08a3c",
           accentColor: "#ffe2b0",
@@ -84,7 +84,7 @@ export const UNIVERSE: Universe = {
           name: "Galaxy Portfolio",
           subtitle: "This site, an explorable galaxy.",
           sectionBody:
-            "This very site: a portfolio in Three.js inspired by No Man's Sky, where each star is a section and every planet is procedurally generated. You're inside it.",
+            "This very site: a portfolio in Three.js inspired by No Man's Sky",
           links: [{ label: "Source", url: "https://github.com/forknay/portfolio" }],
           baseColor: "#a83e22",
           accentColor: "#ffb27a",
@@ -101,13 +101,14 @@ export const UNIVERSE: Universe = {
       name: "About",
       subtitle: "Who I am and what I care about.",
       accentColor: "#34d3c2", // cool teal / cyan
+      cameraZoom: 0.8, // zoom in ~20%
       sun: { color: "#7af0e3", size: 2.6 },
       planets: [
         {
           id: "bio",
           name: "Bio",
           subtitle: "The short version.",
-          sectionBody: "Montréal.",
+          sectionBody: "montreal based student",
           links: [],
           baseColor: "#2bb6a8",
           accentColor: "#c8fff7",
@@ -140,6 +141,7 @@ export const UNIVERSE: Universe = {
       name: "Experience",
       subtitle: "Where I've worked and studied.",
       accentColor: "#a472ff", // violet / magenta
+      cameraZoom: 0.8, // zoom in ~20%
       sun: { color: "#c6a6ff", size: 2.8 },
       planets: [
         {
@@ -149,7 +151,7 @@ export const UNIVERSE: Universe = {
           sectionBody:
             "Sunlune\nSWE Intern, Summer 2025\nDistributed training for LLMs.\n\nARA Robotics\nEmbedded Intern, Summer 2026\nAvionics and flight controller for a UAV.",
           bodyRight:
-            "Your company\nAnytime you want, 2027\nOpen to roles, let's build something.",
+            "Your company\nAnytime you want, 2027\nOpen to roles, let's build",
           links: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/julienyang12/" }],
           baseColor: "#6f44d6",
           accentColor: "#dccaff",
@@ -164,7 +166,7 @@ export const UNIVERSE: Universe = {
           name: "Education",
           subtitle: "Studies and certifications.",
           sectionBody:
-            "Software Engineering at McGill University.\nClass of 2028 · GPA 3.8.",
+            "Software Engineering at McGill University.\n2028 · GPA 3.8.",
           links: [],
           baseColor: "#8a5cf0",
           accentColor: "#e3d4ff",
@@ -182,6 +184,7 @@ export const UNIVERSE: Universe = {
       name: "Contact",
       subtitle: "Let's get in touch.",
       accentColor: "#ff7a9c", // coral / pink
+      cameraZoom: 0.7, // zoom in ~30%
       sun: { color: "#ffa9c0", size: 2.4 },
       planets: [
         {
@@ -191,7 +194,7 @@ export const UNIVERSE: Universe = {
           sectionBody:
             "The fastest way to reach me is email, I usually reply within a day. Open to internships, collaborations, and interesting problems :)",
           links: [
-            { label: "Email", url: "mailto:julien.yang@mail.mcgill.ca" },
+            { label: "Email", url: "mailto:julienyang12@gmail.com" },
             { label: "GitHub", url: "https://github.com/forknay" },
             { label: "LinkedIn", url: "https://www.linkedin.com/in/julienyang12/" },
           ],

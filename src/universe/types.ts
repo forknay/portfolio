@@ -94,6 +94,8 @@ export interface System {
   subtitle: string;
   /** Drives the whole system's palette + its highlighted star colour. */
   accentColor: string;
+  /** Camera distance multiplier at this system (<1 zooms in). Default 1. */
+  cameraZoom?: number;
   sun: {
     color: string;
     /** Sun radius in scene units. */

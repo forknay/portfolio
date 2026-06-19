@@ -2,13 +2,13 @@ import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { UNIVERSE } from "../../universe/universe";
-import { pickRandomConstellation } from "../../universe/selectors";
+import { getSessionConstellation } from "../../universe/selectors";
 import type { System } from "../../universe/types";
 import { paths } from "../../state/navigation";
 import { useUIStore } from "../../state/store";
 import { hashSeed } from "../../lib/rng";
 import { onIdle } from "../../lib/idle";
-import { preloadSystem } from "../lazyViews";
+import { preloadSystem, warmSystem } from "../lazyViews";
 import { VoidDots } from "../common/VoidDots";
 import { StarSprite } from "../common/StarSprite";
 import { ConstellationLines } from "./ConstellationLines";
@@ -32,7 +32,7 @@ export function GalaxyView() {
 
   // Pick a variant once on mount; resolve its 2D layout into centred 3D points.
   const layout = useMemo(() => {
-    const constellation = pickRandomConstellation();
+    const constellation = getSessionConstellation();
 
     const xs = constellation.stars.map((s) => s.pos[0]);
     const ys = constellation.stars.map((s) => s.pos[1]);
@@ -91,7 +91,7 @@ export function GalaxyView() {
               hitSize={7}
               onActivate={() => navigate(paths.system(system.id))}
               onOver={() => {
-                preloadSystem();
+                warmSystem(system); // loads the chunk + pre-builds this system's planet geometry
                 setHovered({ name: system.name, subtitle: system.subtitle, color: system.accentColor });
               }}
               onOut={() => setHovered(null)}

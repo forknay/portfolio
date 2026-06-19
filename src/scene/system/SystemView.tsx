@@ -5,14 +5,23 @@ import { preloadPlanet } from "../lazyViews";
 import { VoidDots } from "../common/VoidDots";
 import { Sun } from "./Sun";
 import { OrbitingPlanet } from "./OrbitingPlanet";
+import { warmPlanetGeometries } from "./warm";
 
 /**
  * System (biome) level: a central sun with planets orbiting, over only the tiny
  * cosmic void dots (no decorative star field here). The accent tints the ambient.
  */
 export function SystemView({ system }: { system: System }) {
-  // Warm the planet chunk while idle so clicking a planet is instant.
-  useEffect(() => onIdle(preloadPlanet), []);
+  // While idle, warm the planet chunk + full-detail geometry so opening a planet
+  // doesn't build on the click.
+  useEffect(
+    () =>
+      onIdle(() => {
+        preloadPlanet();
+        warmPlanetGeometries(system);
+      }),
+    [system],
+  );
 
   return (
     <group>

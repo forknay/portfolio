@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import type { AtmosphereSpec, Planet } from "../../universe/types";
-import { getContinents } from "./continents";
+import { cloudOptions, getContinents } from "./continents";
 import { LowPolyAtmosphere } from "./LowPolyAtmosphere";
 
 /**
@@ -18,14 +18,7 @@ function CloudLayer({
   spec: AtmosphereSpec;
   detail?: number;
 }) {
-  const params = spec.params ?? {};
-  const geometry = getContinents(planet.radius, {
-    coverage: params.coverage,
-    freq: params.freq,
-    topBias: params.topBias,
-    pattern: params.pattern,
-    detail,
-  });
+  const geometry = getContinents(planet.radius, cloudOptions(spec, detail));
 
   return (
     <mesh geometry={geometry}>

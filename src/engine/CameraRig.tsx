@@ -20,7 +20,7 @@ const PARALLAX: Record<Level, number> = { galaxy: 1.2, system: 2.2, planet: 1 };
  * Eases the camera toward the current level's pose every frame using
  * frame-rate-independent exponential smoothing. Reduced-motion snaps instantly.
  */
-export function CameraRig({ level }: { level: Level }) {
+export function CameraRig({ level, systemZoom = 1 }: { level: Level; systemZoom?: number }) {
   const reduced = useReducedMotion();
   const lookAt = useRef(new THREE.Vector3(0, 0, 0));
   const desiredPos = useRef(new THREE.Vector3());
@@ -29,6 +29,8 @@ export function CameraRig({ level }: { level: Level }) {
     const pose = POSES[level];
 
     desiredPos.current.copy(pose.pos);
+    // Per-system zoom (distance multiplier; <1 zooms in) at the system level.
+    if (level === "system") desiredPos.current.multiplyScalar(systemZoom);
     // Subtle pointer parallax (skipped for reduced motion).
     if (!reduced) {
       const amt = PARALLAX[level];

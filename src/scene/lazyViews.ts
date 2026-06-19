@@ -1,4 +1,5 @@
 import { lazy } from "react";
+import type { System } from "../universe/types";
 
 // Per-level chunks, code-split so the initial galaxy load stays small.
 const importSystem = () => import("./system/SystemView");
@@ -23,3 +24,9 @@ export const preloadSystem = () => {
 export const preloadPlanet = () => {
   void importPlanet();
 };
+
+/** Load the system chunk AND pre-build the system's (mini) planet geometry. */
+export async function warmSystem(system: System) {
+  const [, warm] = await Promise.all([importSystem(), import("./system/warm")]);
+  warm.warmSystemGeometries(system);
+}

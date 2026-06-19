@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { fbm } from "../../lib/noise";
+import type { AtmosphereSpec } from "../../universe/types";
 
 /** A small set of pre-baked pattern seeds (pick 1 of these per planet). */
 const PATTERN_SEEDS = [13577, 91237];
@@ -125,6 +126,21 @@ export function buildContinents(
 
 // Cache so repeated planet/system entries don't rebuild the (small) layers.
 const cache = new Map<string, THREE.BufferGeometry>();
+
+/**
+ * Resolve cloud options from an atmosphere spec. Used by both the renderer and
+ * the pre-warm path so they produce identical cache keys.
+ */
+export function cloudOptions(spec: AtmosphereSpec, detail?: number): ContinentOptions {
+  const params = spec.params ?? {};
+  return {
+    coverage: params.coverage,
+    freq: params.freq,
+    topBias: params.topBias,
+    pattern: params.pattern,
+    detail,
+  };
+}
 
 /** Cached `buildContinents` keyed by radius + options. */
 export function getContinents(
