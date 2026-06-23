@@ -31,6 +31,7 @@ function Experience() {
 export function App() {
   return (
     <BrowserRouter
+      basename={import.meta.env.BASE_URL.replace(/\/$/, "") || "/"}
       future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
     >
       <Routes>
