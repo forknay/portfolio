@@ -112,7 +112,12 @@ export const UNIVERSE: Universe = {
           name: "Bio",
           subtitle: "The short version.",
           sectionBody: "montreal based student",
-          links: [],
+          links: [
+            {
+              label: "CV",
+              url: "https://drive.google.com/file/d/1WaFUe0ptKP6-O7W4jiKef6aLweH3NDrI/view?usp=sharing",
+            },
+          ],
           baseColor: "#2bb6a8",
           accentColor: "#c8fff7",
           radius: 1.75,
@@ -200,6 +205,10 @@ export const UNIVERSE: Universe = {
             { label: "Email", url: "mailto:julienyang12@gmail.com" },
             { label: "GitHub", url: "https://github.com/forknay" },
             { label: "LinkedIn", url: "https://www.linkedin.com/in/julienyang12/" },
+            {
+              label: "CV",
+              url: "https://drive.google.com/file/d/1WaFUe0ptKP6-O7W4jiKef6aLweH3NDrI/view?usp=sharing",
+            },
           ],
           baseColor: "#f0608a",
           accentColor: "#ffd2de",
